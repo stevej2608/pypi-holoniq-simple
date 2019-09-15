@@ -1,0 +1,55 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "1. Debug usage.py",
+            "type": "python",
+            "request": "launch",
+            "pythonPath": "${config:python.pythonPath}",
+            "program": "${workspaceFolder}/usage.py",
+            "args": [
+                "runserver"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "justMyCode": false
+        },
+        {
+            "name": "2. PyTest",
+            "type": "python",
+            "request": "launch",
+            "stopOnEntry": false,
+            "pythonPath": "${config:python.pythonPath}",
+            "module": "pytest",
+            "cwd": "${workspaceRoot}",
+            "env": {},
+            "envFile": "${workspaceRoot}/.env",
+            "console": "internalConsole",
+            "justMyCode": false
+        },
+        {
+            "name": "3. Invoke",
+            "type": "python",
+            "request": "launch",
+            "stopOnEntry": false,
+            "pythonPath": "${config:python.pythonPath}",
+            "module": "invoke",
+            "args": [
+                "prerelease",
+                "0.0.1-rc1"
+            ],
+            // !!!!! The following line is needed to allow invoke to find 
+            // executables that are part of the active conda environment. If the conda
+            // env is changed then change the this line accordingly
+            "env": {
+                "Path": "${env:Path};D:\\Anaconda\\envs\\dash-dev\\Scripts;"
+            },
+            "cwd": "${workspaceRoot}",
+            "console": "internalConsole",
+            "justMyCode": false
+        }
+    ]
+}

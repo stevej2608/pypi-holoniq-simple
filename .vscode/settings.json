@@ -1,0 +1,16 @@
+{
+    "python.pythonPath": "D:\\Anaconda\\envs\\py36-clean\\python.exe",
+    "cSpell.words": [],
+    "cSpell.ignoreWords": [
+        "cookiecutter",
+        "helloworld",
+        "holoniq",
+        "python",
+        "pyversion",
+        "release",
+        "sdist",
+        "semver",
+        "set",
+        "shutil"
+    ]
+}
