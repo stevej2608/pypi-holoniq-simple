@@ -1,5 +1,8 @@
+import os
 from termcolor import cprint
+import tempfile
 from shutil import which
+from subprocess import call
 from pathlib import Path
 from setuptools import find_packages
 
@@ -9,6 +12,12 @@ from invoke import run as invoke_run
 from invoke import task
 
 VERSION_TEMPLATE = """__version__ = "{version_string}"
+"""
+
+RELEASE_NOTES_TEMPLATE = """# Write the release notes here
+# Delete the version title to cancel
+Version {version_string}
+{underline}
 """
 
 HERE = Path(__file__).parent
@@ -42,6 +51,16 @@ def release(_ctx, version):
     check_prerequisites()
     info(f"Releasing version {version} as full release")
 
+    release_notes_lines = get_release_notes(version)
+
+    if release_notes_lines is None:
+        error("No release notes: exiting")
+        exit()
+
+    info("Writing release notes to changelog.tmp")
+    with open("changelog.tmp", "w") as f:
+        f.writelines(release_notes_lines)
+
     build_publish(version)
 
     info("Committing version changes")
@@ -49,8 +68,15 @@ def release(_ctx, version):
     run(f"git checkout -b release-{version}")
     run(f"git add {package_name()}/_version.py")
     run(f'git commit -m "Bump version to {version}"')
+
     info(f"Tagging version {version} and pushing to GitHub")
-    run(f"git push origin release-{version} --tags")
+
+    run(f'git tag -a "{version}" -F changelog.tmp')
+    run('call git checkout master')
+    run(f'git merge release-{version}')
+    run(f'git branch -D release-{version}')
+
+    run(f"git push origin master --tags")
 
 
 @task(help={
@@ -70,6 +96,43 @@ def postrelease(_ctx, version):
     run(f"git add {package_name()}/_version.py")
     run('git commit -m "Back to dev"')
     run(f"git push origin postrelease-{version}")
+
+
+def get_release_notes(version):
+    version = normalize_version(version)
+    underline = "=" * len(f"Version {version}")
+    initial_message = RELEASE_NOTES_TEMPLATE.format(
+        version_string=version, underline=underline
+    )
+    lines = open_editor(initial_message)
+    non_commented_lines = [line for line in lines if not line.startswith("#")]
+    changelog = "".join(non_commented_lines)
+    if version in changelog:
+        if not non_commented_lines[-1].isspace():
+            non_commented_lines.append("\n")
+        return non_commented_lines
+    else:
+        return None
+
+def open_editor(initial_message):
+    editor = os.environ.get("EDITOR", "vim")
+
+    tmp = tempfile.NamedTemporaryFile(suffix=".tmp")
+    tmp.close()
+
+    fname = tmp.name
+
+    with open(fname, "w") as f:
+        f.write(initial_message)
+        f.flush()
+
+    call([editor, fname], close_fds=True)
+
+    with open(fname, "r") as f:
+        lines = f.readlines()
+
+    return lines
+
 
 
 def build_publish(version):
@@ -96,15 +159,15 @@ def build_publish(version):
 
 def set_pyversion(version):
 
-    def normalize_version(version):
-        version_info = semver.parse_version_info(version)
-        version_string = str(version_info)
-        return version_string
-
     version = normalize_version(version)
     version_path = HERE / package_name() / "_version.py"
     with version_path.open("w") as f:
         f.write(VERSION_TEMPLATE.format(version_string=version))
+
+def normalize_version(version):
+    version_info = semver.parse_version_info(version)
+    version_string = str(version_info)
+    return version_string
 
 def package_name():
     packages = find_packages()
@@ -122,14 +185,13 @@ def check_prerequisites():
 
 def run(command, **kwargs):
     result = invoke_run(command, hide=True, warn=True, **kwargs)
-    print('{} : {}'.format(command, result))
+    print(f'{command}')
     if result.exited != 0:
         error(f"Error running {command}")
         print(result.stdout)
         print()
         print(result.stderr)
         exit(result.exited)
-
 
 def error(text):
     cprint(text, "red")
