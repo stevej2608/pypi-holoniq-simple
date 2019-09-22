@@ -127,6 +127,9 @@ And again
 
     keyring set https://test.pypi.org/legacy/ your-username
 
+This doesn't appear to work on Windows, an alternative is to set your PyPi name & password 
+using the environmental variables `TWINE_USERNAME` and `TWINE_PASSWORD`, [see](https://pypi.org/project/twine/).
+
 
 ### Prerelease
 

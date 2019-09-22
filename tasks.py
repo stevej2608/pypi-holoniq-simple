@@ -145,7 +145,8 @@ def build_publish(version):
     def release_python_sdist():
         run("rm -f dist/*")
         run("python setup.py sdist")
-        invoke_run("twine upload dist/*")
+        info("PyPI credentials:")
+        invoke_run("twine upload dist/*", echo=True)
 
 
     info("Cleaning")
@@ -153,7 +154,6 @@ def build_publish(version):
     info("Updating versions")
     set_pyversion(version)
     info("Building and uploading Python source distribution")
-    info("PyPI credentials:")
     release_python_sdist()
 
 
