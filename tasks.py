@@ -71,7 +71,7 @@ def release(_ctx, version):
 
     info(f"Tagging version {version} and pushing to GitHub")
 
-    run(f'git tag -a "{version}" -F changelog.tmp')
+    run(f'git tag -a {version} -F changelog.tmp')
     run('call git checkout master')
     run(f'git merge release-{version}')
     run(f'git branch -D release-{version}')
@@ -184,9 +184,9 @@ def check_prerequisites():
             exit(127)
 
 def run(command, **kwargs):
-    result = invoke_run(command, hide=True, warn=True, **kwargs)
     print(f'{command}')
-    if result.exited != 0:
+    result = invoke_run(command, hide=True, warn=True, **kwargs)
+    if (result.exited is not None) and (result.exited != 0):
         error(f"Error running {command}")
         print(result.stdout)
         print()

@@ -38,8 +38,8 @@
             "pythonPath": "${config:python.pythonPath}",
             "module": "invoke",
             "args": [
-                "prerelease",
-                "0.0.1-rc1"
+                "release",
+                "0.0.1"
             ],
             // !!!!! The following line is needed to allow invoke to find 
             // executables that are part of the active conda environment. If the conda
