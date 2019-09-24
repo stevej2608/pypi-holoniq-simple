@@ -99,7 +99,7 @@ A potential user will be more inclined to use your package if they can see it
 has tests and that these tests pass. [Travis][travis-home] is free for open source 
 projects and easy to integrate into your development cycle. 
 
-The file `travis.yaml` contains a [default](https://docs.travis-ci.com/user/languages/python/#default-build-script) Travis configuration for Python. Signing up with your gitHub account should be all that's 
+The file `.travis.yml` contains a [default](https://docs.travis-ci.com/user/languages/python/#default-build-script) Travis configuration for Python. Signing up with your gitHub account should be all that's 
 needed. If you have no interest in Travis just delete this file.
 
 ## PyPi Release

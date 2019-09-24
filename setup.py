@@ -33,7 +33,6 @@ setup(
     long_description=read("landing-page.md"),
     long_description_content_type="text/markdown",
     classifiers=[
-        "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         'License :: OSI Approved :: MIT License',
